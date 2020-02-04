@@ -60,6 +60,18 @@ function checkoutCommit() {
 }
 ################################################################################
 
+################################################################################
+##
+################################################################################
+function checkoutPatchset() {
+  cd "$DOCKER_COREBOOT_DIR" || exit
+
+  git fetch "https://review.coreboot.org/coreboot" "$COREBOOT_PATCHSET" && git checkout FETCH_HEAD
+
+  git submodule update --recursive --remote
+}
+################################################################################
+
 
 ################################################################################
 ## Download the latest released version of Coreboot
@@ -89,13 +101,16 @@ function downloadCoreboot() {
 ########################################
 ########################################################################################################################
 function downloadOrUpdateCoreboot() {
-  if [ -z "$COREBOOT_COMMIT" ] && [ -z "$COREBOOT_TAG" ] && [ -z "$IS_BUILD_DIR_EMPTY" ]; then
+  if [ -z "$COREBOOT_COMMIT" ] && [ -z "$COREBOOT_PATCHSET" ] && [ -z "$COREBOOT_TAG" ] && [ -z "$IS_BUILD_DIR_EMPTY" ]; then
     # If a no commit nor tag is given and the directory is empty download Coreboot release
     downloadCoreboot;
   elif [ "$COREBOOT_COMMIT" ]; then
   #   DOCKER_COMMIT?=$(shell git log -n 1 --pretty=%h)
     gitUpdate
     checkoutCommit
+  elif [ "$COREBOOT_PATCHSET" ]; then
+    gitUpdate
+    checkoutPatchset
   elif [ "$COREBOOT_TAG" ]; then
     gitUpdate
     checkoutTag

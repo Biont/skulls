@@ -26,6 +26,7 @@ usage()
   echo "  -h, --help                   Show this help"
   echo "  -i, --config                 Execute with interactive make config"
   echo "  -t, --tag <tag>              Git tag/version"
+  echo "  -b, --branch <branch>        Git branch"
   echo
   echo "If a tag, commit or bleeding-edge flag is not given, the latest Coreboot release will be built."
   echo
@@ -57,6 +58,9 @@ do
         shift 1;;
       -t | --tag)
         COREBOOT_TAG="$2"
+        shift 2;;
+      -p | --patchset)
+        COREBOOT_PATCHSET="$2"
         shift 2;;
       -*)
         echo "Error: Unknown option: $1" >&2
@@ -94,6 +98,7 @@ docker run --rm -it \
     -v "$PWD/common:$DOCKER_COMMON_SCRIPT_DIR" \
     -e COREBOOT_COMMIT="$COREBOOT_COMMIT" \
     -e COREBOOT_TAG="$COREBOOT_TAG" \
+    -e COREBOOT_PATCHSET="$COREBOOT_PATCHSET" \
     -e COREBOOT_CONFIG="$COREBOOT_CONFIG" \
     coreboot/coreboot-sdk:"$COREBOOT_SDK_VERSION" \
     /home/coreboot/scripts/compile.sh
